@@ -1,0 +1,5 @@
+[
+  {"source":"postgresql","guid":"demo-pg-1","url":"https://www.postgresql.org/news/demo-snapshot-1/","title":"[模拟资讯] PostgreSQL 社区维护公告快照","summary":"固定快照 A 的数据库分类演示条目，不是真实新闻或当天新增。","published_at":"2026-01-10T08:00:00+08:00"},
+  {"source":"aws-security","guid":"demo-aws-1","url":"https://aws.amazon.com/security/security-bulletins/demo-snapshot-1/","title":"[模拟资讯] AWS 安全公告快照","summary":"固定快照 A 的安全分类演示条目，原始发布时间缺失。","published_at":null},
+  {"source":"postgresql","guid":"demo-pg-2","url":"https://www.postgresql.org/news/demo-snapshot-2/","title":"[模拟资讯] PostgreSQL 新增快照条目","summary":"仅快照 B 新增，用于验证幂等去重，不代表实时行业动态。","published_at":"2026-01-11T08:00:00+08:00"}
+]

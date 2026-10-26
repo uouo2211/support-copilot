@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}工作台 · DataPilot 演示{% endblock %}
+{% block heading %}客服工作台{% endblock %}
+{% block content %}
+
+<div class="row mb-3">
+  <div class="col-md-4"><div class="card"><div class="card-body">
+    <div class="label">我负责的客户</div><div class="h4 mb-0">{{ customer_count }}</div>
+  </div></div></div>
+  <div class="col-md-4"><div class="card"><div class="card-body">
+    <div class="label">待处理会话</div><div class="h4 mb-0">{{ rows|selectattr('status','equalto','open')|list|length }}</div>
+  </div></div></div>
+  <div class="col-md-4"><div class="card"><div class="card-body">
+    <div class="label">已生成草稿</div><div class="h4 mb-0">{{ rows|sum(attribute='draft_count') }}</div>
+  </div></div></div>
+</div>
+
+<div class="card">
+  <div class="card-header">会话列表（仅显示我有权限的客户）</div>
+  <div class="table-responsive">
+    <table class="table mb-0">
+      <thead><tr><th>会话</th><th>客户</th><th>产品版本</th><th>最近决策</th><th>草稿</th><th>状态</th><th></th></tr></thead>
+      <tbody>
+      {% for r in rows %}
+        <tr>
+          <td>{{ r.title }}</td>
+          <td>{{ r.customer }}</td>
+          <td>
+            {% if r.version == '未确认' %}<span class="badge text-bg-warning">{{ r.version }}</span>
+            {% else %}<span class="badge badge-soft">{{ r.version }}</span>{% endif %}
+          </td>
+          <td>{% if r.decision %}<span class="badge badge-soft">{{ r.decision }}</span>{% else %}<span class="label">—</span>{% endif %}</td>
+          <td>{{ r.draft_count }}</td>
+          <td>{{ r.status }}</td>
+          <td><a class="btn btn-sm btn-primary" href="/c/{{ r.id }}">进入</a></td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

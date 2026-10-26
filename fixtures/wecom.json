@@ -1,0 +1,4 @@
+[
+  {"platform":"wecom","platform_tenant":"demo-corp","application_id":"archive-demo","chat_id":"group-a","message_id":"backup-101","sender":"客户 A 运维（演示）","timestamp":"2026-01-12T09:00:00+08:00","reply_to":null,"content":"DataPilot 3.2 备份对象找不到，任务显示成功，可能是对象存储延迟？"},
+  {"platform":"wecom","platform_tenant":"demo-corp","application_id":"archive-demo","chat_id":"group-a","message_id":"backup-102","sender":"技术支持（演示）","timestamp":"2026-01-12T09:08:00+08:00","reply_to":"backup-101","content":"已验证：本次备份案例是查看了错误 prefix。核对任务详情中的 bucket 与 prefix 后，在正确 prefix 找到备份对象。不是 S3 最终一致性问题。验证材料：演示工单 DEMO-42。联系 test@example.com。"}
+]

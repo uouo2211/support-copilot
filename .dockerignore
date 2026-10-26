@@ -1,0 +1,16 @@
+.git
+.env
+.env.*
+!.env.example
+.venv
+.local
+__pycache__
+**/__pycache__
+.pytest_cache
+.ruff_cache
+.coverage
+htmlcov
+artifacts
+test-results
+node_modules
+.DS_Store

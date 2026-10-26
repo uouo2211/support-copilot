@@ -1,0 +1,20 @@
+.env
+.env.*
+!.env.example
+.venv/
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+*.pyc
+.coverage
+htmlcov/
+artifacts/
+.local/
+test-results/
+.DS_Store
+node_modules/
+*.log
+# 演示运行时的本地数据库，不属于交付源码
+*.db
+*.db-journal
+*.sqlite3

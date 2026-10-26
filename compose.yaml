@@ -1,0 +1,54 @@
+name: support-copilot
+
+x-app: &app
+  image: support-copilot:local
+  build: .
+  env_file: .env
+  environment:
+    # Container-to-container address. Do not use localhost for the db service.
+    DATABASE_URL: postgresql+psycopg://copilot:${POSTGRES_PASSWORD:-copilot}@db:5432/copilot
+  init: true
+  restart: unless-stopped
+  depends_on:
+    db:
+      condition: service_healthy
+
+services:
+  db:
+    image: pgvector/pgvector:0.8.0-pg16
+    environment:
+      POSTGRES_DB: copilot
+      POSTGRES_USER: copilot
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-copilot}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    # No host port: the database is reachable only on the Compose network.
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U copilot -d copilot"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    restart: unless-stopped
+
+  web:
+    <<: *app
+    command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+    ports:
+      - "${APP_BIND_ADDRESS:-127.0.0.1}:${APP_PORT:-8000}:8000"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health/ready', timeout=4)"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
+  worker:
+    <<: *app
+    command: ["python", "-m", "app.jobs.worker"]
+    depends_on:
+      db:
+        condition: service_healthy
+      web:
+        condition: service_healthy
+
+volumes:
+  postgres_data:

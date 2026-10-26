@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}{{ status }} · 演示{% endblock %}
+{% block heading %}操作未完成{% endblock %}
+{% block content %}
+<div class="card">
+  <div class="card-body">
+    <div class="mb-3"><span class="badge text-bg-danger">{{ status }}</span></div>
+    <div class="answer-box">{{ detail }}</div>
+    <p class="label mt-3 mb-0">
+      这条错误通常来自服务的硬性约束而不是程序异常，例如：角色无此权限、引用的证据已撤销或过期、
+      文本已被修改后未重新确认、缺少产品版本导致无法给出结论。
+    </p>
+    <a class="btn btn-sm btn-primary mt-3" href="/workbench">返回工作台</a>
+  </div>
+</div>
+{% endblock %}

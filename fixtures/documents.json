@@ -1,0 +1,18 @@
+[
+ {"id":"doc-compat31","title":"PostgreSQL 兼容矩阵 · 3.1（演示）","topic":"兼容 PostgreSQL 数据库支持","min":"3.1","max":"3.1","content":"【演示产品事实】DataPilot 3.1 支持 PostgreSQL 15，不支持 PostgreSQL 16。接入前核对数据库主版本与产品版本。"},
+ {"id":"doc-compat32","title":"PostgreSQL 兼容矩阵 · 3.2（演示）","topic":"兼容 PostgreSQL 数据库支持","min":"3.2","max":"3.2","content":"【演示产品事实】DataPilot 3.2 新增支持 PostgreSQL 16，并保留 PostgreSQL 15 支持。"},
+ {"id":"doc-alert32","title":"告警恢复通知检查 · 3.2（演示）","topic":"告警 恢复 通知","min":"3.2","max":"3.2","content":"【演示产品事实】DataPilot 3.2 告警恢复后没有通知：检查告警规则的“恢复通知”开关、通知路由与静默时间窗口；确认接收组成员有效，再查看通知记录中的投递状态。"},
+ {"id":"doc-alert31","title":"告警通知路由 · 3.1（演示）","topic":"告警 通知 路由","min":"3.1","max":"3.1","content":"【演示产品事实】DataPilot 3.1 告警通知采用规则级接收组配置。检查接收组与静默时间窗口；3.2 的恢复通知开关不适用于 3.1。"},
+ {"id":"doc-monitor","title":"监控采样与时间窗口（演示）","topic":"监控 采样 指标","content":"【演示产品事实】监控指标以 60 秒间隔采样。查看监控空白时，核对实例状态、采集器心跳与查询时间窗口。"},
+ {"id":"doc-retention","title":"监控指标保留周期（演示）","topic":"监控 指标 保留","content":"【演示产品事实】监控指标默认保留 30 天。该说明只涉及监控指标，不代表备份文件保留策略。"},
+ {"id":"doc-backup","title":"备份任务状态检查（演示）","topic":"备份 任务 状态","content":"【演示产品事实】备份任务包含排队、运行、成功、失败状态。排查时记录任务 ID、完成时间和错误信息，不自动修改存储配置。"},
+ {"id":"doc-restore","title":"恢复演练审批（演示）","topic":"恢复 演练 审批","content":"【演示产品事实】恢复演练必须由客户授权负责人审批，在隔离测试实例执行并记录验证结果。本助手不执行恢复命令。"},
+ {"id":"doc-permissions","title":"最小权限与只读接入（演示）","topic":"接入 只读 权限","content":"【演示产品事实】监控接入使用最小权限账号，不需要授予数据库超级用户权限。备份权限由客户管理员按正式接入清单独立审批。"},
+ {"id":"doc-maintenance","title":"维护窗口与告警静默（演示）","topic":"维护 静默 时间窗口","content":"【演示产品事实】维护窗口内可以按规则配置告警静默；静默不停止监控采集。维护结束后检查静默窗口是否关闭。"},
+ {"id":"doc-audit","title":"审计记录查询（演示）","topic":"审计 记录 查询","content":"【演示产品事实】客服可查看其授权客户的回复动作和知识引用记录。审计记录不等同于企业微信平台送达回执。"},
+ {"id":"doc-escalation","title":"技术支持转交要求（演示）","topic":"技术 转交 工单","content":"【演示产品事实】技术转交需要问题描述、产品版本、已做排查、授权证据与缺失信息；高风险变更必须走客户审批流程。"},
+ {"id":"doc-retry-a","title":"任务自动重试规范 A（演示冲突）","topic":"任务 自动 重试 次数","min":"3.2","max":"3.2","claim_key":"job-retry","claim_value":"3","content":"【演示冲突证据 A】DataPilot 3.2 任务自动重试次数为 3 次。此条专门用于正式证据冲突测试。"},
+ {"id":"doc-retry-b","title":"任务自动重试规范 B（演示冲突）","topic":"任务 自动 重试 次数","min":"3.2","max":"3.2","claim_key":"job-retry","claim_value":"5","content":"【演示冲突证据 B】DataPilot 3.2 任务自动重试次数为 5 次。此条专门用于正式证据冲突测试。"},
+ {"id":"doc-b-private","title":"客户 B 专属巡检（私有演示）","topic":"专属 巡检 标识","customer":"customer-b","content":"【私有演示数据】客户 B 独有巡检标识为 B-PRIVATE-ORCHID，仅限客户 B 授权客服与已分配工作人员。"},
+ {"id":"doc-expired","title":"旧版归档通道（过期演示）","topic":"冷归档 ICE-ARCHIVE","expired":true,"content":"【过期演示数据】旧版冷归档标识 ICE-ARCHIVE 已过期，不能作为当前答案依据。"}
+]

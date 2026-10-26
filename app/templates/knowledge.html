@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% set status_label = {'pending_review':'待审核','published':'已发布','revoked':'已撤销','rejected':'已驳回','superseded':'已被取代'} %}
+{% set status_tone = {'pending_review':'text-bg-warning','published':'text-bg-success','revoked':'text-bg-danger','rejected':'text-bg-secondary','superseded':'text-bg-secondary'} %}
+{% block title %}知识审核 · 演示{% endblock %}
+{% block heading %}群聊候选知识的审核与发布{% endblock %}
+{% block content %}
+
+<div class="alert alert-info py-2" style="font-size:13px;">
+  只有状态为「已发布」的知识才进入检索索引。当前组织索引版本：<span class="mono">{{ index_version }}</span>
+  （每次发布或撤销都会自增，用于让旧缓存失效）。发布与撤销操作仅限 <span class="mono">reviewer</span> 角色。
+</div>
+
+{% for r in rows %}
+<div class="card mb-3" id="k-{{ r.id }}">
+  <div class="card-header d-flex justify-content-between align-items-center">
+    <span>{{ r.title }}</span>
+    <span class="badge {{ status_tone.get(r.status,'text-bg-secondary') }}">{{ status_label.get(r.status, r.status) }}</span>
+  </div>
+  <div class="card-body">
+    <div class="row mb-2">
+      <div class="col-md-3"><span class="label">归属</span><br>{{ r.category }}</div>
+      <div class="col-md-2"><span class="label">可见性</span><br>{{ r.visibility }}</div>
+      <div class="col-md-2"><span class="label">适用版本</span><br>{{ r.versions }}</div>
+      <div class="col-md-5"><span class="label">主题</span><br>{{ r.topic }}</div>
+    </div>
+    <div class="answer-box mb-3">{{ r.content }}</div>
+    <div class="label mb-3">验证材料：{{ r.verification or '—' }}</div>
+
+    {% if r.status == 'pending_review' %}
+      <form method="post" action="/knowledge/{{ r.id }}/publish" class="border rounded p-3 bg-white">
+        <input type="hidden" name="expected_revision" value="{{ r.expected_revision }}">
+        <div class="mb-2">
+          <label class="label">审核后正文（原始群聊未经审核员显式批准，不得对外授权）</label>
+          <textarea class="form-control" name="content" rows="5">{{ r.content }}</textarea>
+        </div>
+        <div class="row mb-2">
+          <div class="col-md-3"><label class="label">起始版本</label>
+            <input class="form-control form-control-sm" name="lower" value="{{ r.min }}"></div>
+          <div class="col-md-3"><label class="label">结束版本</label>
+            <input class="form-control form-control-sm" name="upper" value="{{ r.max }}"></div>
+          <div class="col-md-6"><label class="label">验证材料（必填）</label>
+            <input class="form-control form-control-sm" name="verification" value="演示审核：已核对 DEMO-42 工单"></div>
+        </div>
+        <div class="form-check mb-3">
+          <input class="form-check-input" type="checkbox" name="public_approved" value="true" id="pa-{{ r.id }}">
+          <label class="form-check-label" for="pa-{{ r.id }}">
+            审核员显式批准转为公共知识并对外授权（会另存脱敏公开副本，不暴露原始群聊）
+          </label>
+        </div>
+        <button class="btn btn-sm btn-success">发布并进入索引</button>
+      </form>
+    {% elif r.status == 'published' %}
+      <form method="post" action="/knowledge/{{ r.id }}/revoke">
+        <button class="btn btn-sm btn-outline-danger">撤销（立即停止被引用）</button>
+      </form>
+    {% else %}
+      <div class="label">已停止引用，如需恢复请使用回滚到已验证修订。</div>
+    {% endif %}
+  </div>
+</div>
+{% endfor %}
+{% endblock %}

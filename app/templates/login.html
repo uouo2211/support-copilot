@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}登录 · DataPilot 客服助手演示{% endblock %}
+{% block heading %}演示登录{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-6 col-lg-5">
+    <div class="card">
+      <div class="card-body">
+        <p class="text-secondary mb-3" style="font-size:13px;">
+          这是虚构产品 DataPilot 的客服助手演示环境，产品能力、客户、文档与群聊全部为演示数据。
+        </p>
+        {% if error %}<div class="alert alert-danger py-2" style="font-size:13px;">{{ error }}</div>{% endif %}
+        <form method="post" action="/login">
+          <div class="mb-3">
+            <label class="form-label">账号</label>
+            <input class="form-control" name="username" value="staff-a" autocomplete="username">
+            <div class="form-text">演示密码：<span class="mono">Demo-Only-2026!</span></div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">密码</label>
+            <input class="form-control" name="password" type="password" value="Demo-Only-2026!" autocomplete="current-password">
+          </div>
+          <button class="btn btn-primary w-100">登录</button>
+        </form>
+        <hr>
+        <div class="small text-secondary">
+          <div class="mb-1">演示账号（按角色隔离权限）：</div>
+          <ul class="mb-0 ps-3">
+            <li><span class="mono">staff-a</span> 客服小林 —— 提问、编辑、确认、转交（推荐主演示流程）</li>
+            <li><span class="mono">reviewer</span> 审核员李岚 —— 知识发布与撤销</li>
+            <li><span class="mono">tech</span> 技术支持王栋 —— 查看转交与反馈</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

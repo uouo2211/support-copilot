@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}DataPilot 客服助手 · 演示{% endblock %}</title>
+<link rel="stylesheet" href="/static/vendor/bootstrap-5.3.3.min.css">
+<style>
+:root{--brand:#185FA5;--brand-soft:#E6F1FB;}
+body{background:#F7F8FA;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;}
+.navbar{background:#fff;border-bottom:1px solid rgba(0,0,0,.08);}
+.brand{font-weight:500;color:var(--brand);}
+.brand small{color:#6B7280;font-weight:400;}
+.card{border:1px solid rgba(0,0,0,.08);border-radius:12px;box-shadow:none;}
+.card-header{background:#fff;border-bottom:1px solid rgba(0,0,0,.06);font-weight:500;}
+.mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;}
+.badge-soft{background:var(--brand-soft);color:var(--brand);font-weight:500;}
+.demo-flag{background:#FAEEDA;color:#854F0B;font-size:12px;border-radius:6px;padding:2px 8px;}
+.label{font-size:12px;color:#6B7280;}
+.answer-box{background:#FBFCFD;border:1px solid rgba(0,0,0,.07);border-radius:8px;padding:12px;white-space:pre-wrap;line-height:1.7;}
+.excerpt{background:#fff;border-left:3px solid #B5D4F4;padding:8px 12px;margin:6px 0;font-size:13px;color:#374151;}
+table.table td,table.table th{font-size:13px;vertical-align:middle;}
+</style>
+</head>
+<body>
+{% if user %}
+<nav class="navbar navbar-expand">
+  <div class="container">
+    <span class="brand me-4">DataPilot 客服助手 <small>企业客服 AI 草稿助手</small></span>
+    <div class="navbar-nav flex-row gap-3">
+      <a class="nav-link px-0" href="/workbench">工作台</a>
+      <a class="nav-link px-0" href="/knowledge">知识审核</a>
+      <a class="nav-link px-0" href="/news">行业资讯</a>
+      <a class="nav-link px-0" href="/audits">操作留痕</a>
+    </div>
+    <div class="ms-auto d-flex align-items-center gap-3">
+      <span class="label">{{ user.display_name }} · {{ user.role }}</span>
+      <form method="post" action="/logout" class="m-0"><button class="btn btn-sm btn-outline-secondary">退出</button></form>
+    </div>
+  </div>
+</nav>
+{% endif %}
+<div class="container py-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h5 mb-0">{% block heading %}{% endblock %}</h1>
+    <span class="demo-flag">全部为演示数据 · DataPilot 为虚构产品</span>
+  </div>
+  {% block content %}{% endblock %}
+</div>
+<script src="/static/vendor/bootstrap-5.3.3.bundle.min.js"></script>
+<script src="/static/vendor/lucide-0.468.0.min.js"></script>
+<script>lucide && lucide.createIcons && lucide.createIcons();</script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

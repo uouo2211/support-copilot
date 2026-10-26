@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+{% set labels = {'suggest':'建议回复','clarify':'需向客户澄清','handoff':'转技术支持','deny':'无依据·拒绝生成'} %}
+{% set tones = {'suggest':'text-bg-success','clarify':'text-bg-warning','handoff':'text-bg-warning','deny':'text-bg-danger'} %}
+{% block title %}{{ conv.title }} · 演示{% endblock %}
+{% block heading %}会话：{{ conv.title }}{% endblock %}
+{% block content %}
+
+<div class="card mb-3"><div class="card-body"><div class="row">
+  <div class="col-md-3"><div class="label">客户</div>{{ customer }}</div>
+  <div class="col-md-3"><div class="label">产品版本</div>
+    {% if conv.product_version %}<span class="badge badge-soft">{{ conv.product_version }}</span>
+    {% else %}<span class="badge text-bg-warning">未确认</span>{% endif %}</div>
+  <div class="col-md-3"><div class="label">处理状态</div>{{ conv.status }}</div>
+  <div class="col-md-3"><div class="label">当前操作人</div>{{ user.display_name }}（{{ user.role }}）</div>
+</div></div></div>
+
+<div class="card mb-3">
+  <div class="card-header">客户提问上下文</div>
+  <div class="card-body">
+    {% for m in messages %}
+      <div class="mb-2"><span class="badge badge-soft rounded-pill">{{ m.sender }}</span>
+        <span class="ms-2">{{ m.content }}</span></div>
+    {% endfor %}
+  </div>
+</div>
+
+<div class="card mb-3">
+  <div class="card-header">向助手提问</div>
+  <div class="card-body">
+    <form method="post" action="/c/{{ conv.id }}/ask" class="d-flex gap-2">
+      <input class="form-control" name="question" placeholder="例：3.2 告警恢复后为什么没有通知？" required>
+      <button class="btn btn-primary text-nowrap">生成草稿</button>
+    </form>
+  </div>
+</div>
+
+{% for d in drafts %}
+{% set last = actions.get(d.id) %}
+<div class="card mb-3" id="draft-{{ d.id }}">
+  <div class="card-header d-flex justify-content-between align-items-center">
+    <span>草稿 · {{ d.question }}</span>
+    <span class="badge {{ tones.get(d.original.decision, 'text-bg-secondary') }}">
+      {{ labels.get(d.original.decision, d.original.decision) }}</span>
+  </div>
+  <div class="card-body">
+
+    <div class="mb-3">
+      <span class="label">适用范围：</span>{{ d.original.applicability }}
+      <span class="label ms-3">检索方式：</span>{{ d.original.retrieval }}
+      <span class="label ms-3">生成模式：</span>{{ d.mode }}
+      <span class="label ms-3">耗时：</span>{{ d.latency_ms }} ms
+      <span class="label ms-3">原因码：</span><span class="mono">{{ d.original.reason_codes|join(', ') }}</span>
+    </div>
+
+    {% if d.original.missing_context %}
+      <div class="alert alert-warning py-2" style="font-size:13px;">
+        缺失上下文：{{ d.original.missing_context|join('、') }}
+      </div>
+    {% endif %}
+
+    {% if d.original.citations %}
+      <div class="mb-3">
+        <div class="label mb-1">引用证据（由服务端按证据 ID 解析，模型不能自行编造链接）</div>
+        {% for c in d.original.citations %}
+          <details class="mb-1">
+            <summary class="excerpt">
+              {{ c.title }}
+              {% if c.external_allowed %}<span class="badge text-bg-success ms-1">可外发</span>
+              {% else %}<span class="badge text-bg-secondary ms-1">仅内部</span>{% endif %}
+            </summary>
+            <div class="px-3 pb-2 small text-secondary">
+              <div class="mono">evidence {{ c.evidence_id }}</div>
+              <div>{{ c.excerpt }}</div>
+            </div>
+          </details>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <form method="post" action="/drafts/{{ d.id }}/edit" class="mb-3">
+      <input type="hidden" name="revision" value="{{ d.revision }}">
+      <label class="label">客服可编辑的回复文本（第 {{ d.revision }} 版{% if d.confirmed_hash %} · 已确认{% endif %}）</label>
+      <textarea class="form-control mb-2" name="text" rows="6">{{ d.edited_answer }}</textarea>
+      <button class="btn btn-sm btn-outline-primary">保存修改</button>
+      <span class="label ms-2">改动后已确认状态会失效，需重新确认</span>
+    </form>
+
+    <div class="d-flex flex-wrap gap-2">
+      <form method="post" action="/drafts/{{ d.id }}/confirm">
+        <input type="hidden" name="revision" value="{{ d.revision }}">
+        <button class="btn btn-sm btn-success">确认并生成可复制文本</button>
+      </form>
+      {% if d.confirmed_hash and last and last.status != 'manually_replied' %}
+      <form method="post" action="/drafts/{{ d.id }}/sent">
+        <input type="hidden" name="action_id" value="{{ last.id }}">
+        <button class="btn btn-sm btn-primary">标记人工已回复</button>
+      </form>
+      {% endif %}
+      <form method="post" action="/drafts/{{ d.id }}/handoff" class="d-flex gap-1">
+        <input class="form-control form-control-sm" name="troubleshooting" placeholder="已排查内容" style="width:200px">
+        <button class="btn btn-sm btn-outline-secondary">转技术</button>
+      </form>
+    </div>
+
+    {% if d.confirmed_hash and last %}
+      <div class="alert alert-success mt-3 mb-0">
+        <div class="d-flex justify-content-between align-items-center">
+          <span class="label">确认文本{% if last.status == 'manually_replied' %} · 已标记人工回复{% endif %}</span>
+          <button class="btn btn-sm btn-outline-success" onclick="copyText(this)">复制到剪贴板</button>
+        </div>
+        <div class="answer-box mt-2" data-copy>{{ last.text }}</div>
+        <div class="label mt-2">复制成功不等于平台送达；请在企业微信自行发送后再标记「人工已回复」。</div>
+      </div>
+    {% endif %}
+
+    <form method="post" action="/drafts/{{ d.id }}/feedback" class="mt-3 d-flex gap-2">
+      <select class="form-select form-select-sm" name="rating" style="width:160px">
+        <option value="useful">有用</option><option value="needs_edit">需要较多修改</option>
+        <option value="useless">没用</option>
+      </select>
+      <input class="form-control form-control-sm" name="note" placeholder="反馈备注">
+      <button class="btn btn-sm btn-outline-secondary">提交反馈</button>
+    </form>
+
+  </div>
+</div>
+{% endfor %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+function copyText(btn){
+  const box = btn.closest('.alert').querySelector('[data-copy]');
+  navigator.clipboard.writeText(box.innerText).then(()=>{
+    const old = btn.innerText; btn.innerText = '已复制'; btn.classList.add('disabled');
+    setTimeout(()=>{ btn.innerText = old; btn.classList.remove('disabled'); }, 1500);
+  });
+}
+</script>
+{% endblock %}
